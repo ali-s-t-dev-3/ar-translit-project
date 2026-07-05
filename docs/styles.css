@@ -127,6 +127,7 @@ h1 {
   line-height: 1.04;
   font-weight: 760;
   letter-spacing: 0;
+  text-wrap: balance;
 }
 
 .hero-copy p {
@@ -383,15 +384,52 @@ footer a {
     position: static;
     align-items: flex-start;
     flex-direction: column;
+    padding: 18px 20px;
+  }
+
+  .brand {
+    width: 100%;
+    gap: 12px;
+  }
+
+  .brand-mark {
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    font-size: 24px;
+  }
+
+  .brand > span {
+    min-width: 0;
+  }
+
+  .brand strong {
+    font-size: 16px;
+  }
+
+  .brand span span {
+    font-size: 12px;
   }
 
   .nav-links {
     width: 100%;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 12px 28px;
   }
 
   .hero {
     padding-top: 34px;
+  }
+
+  h1 {
+    font-size: 34px;
+    line-height: 1.08;
+  }
+
+  .hero-copy p {
+    font-size: 17px;
+    line-height: 1.55;
   }
 
   .demo-grid,
