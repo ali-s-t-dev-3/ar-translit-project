@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  buildDisplayState,
   getPrediction,
   getTopSuggestions,
   transliterate,
@@ -29,4 +30,27 @@ test("validateInput accepts Arabizi input and rejects empty or invalid input", (
   assert.equal(validateInput("salam"), null);
   assert.equal(validateInput(""), "Please enter a transliterated word.");
   assert.equal(validateInput("salam!"), "Invalid character detected.");
+});
+
+test("buildDisplayState mirrors the Tkinter app boxes", () => {
+  assert.deepEqual(buildDisplayState("shkrA"), {
+    error: "",
+    output: "شكرا",
+    suggestions: "شكرا",
+    prediction: "جزيلا"
+  });
+
+  assert.deepEqual(buildDisplayState("ktAb"), {
+    error: "",
+    output: "كتاب",
+    suggestions: "كتاب",
+    prediction: ""
+  });
+
+  assert.deepEqual(buildDisplayState("abc!"), {
+    error: "Invalid character detected.",
+    output: "",
+    suggestions: "",
+    prediction: ""
+  });
 });

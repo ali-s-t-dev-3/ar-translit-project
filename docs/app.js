@@ -305,8 +305,6 @@ export const bigrams = {
   ذلك: { الطريق: 700 }
 };
 
-const exampleInputs = ["AlslAm", "Alykm", "bsm", "shkrA", "kyf", "ktAb"];
-
 export function transliterate(text, transliterationRules = rules) {
   let result = "";
   let index = 0;
@@ -387,6 +385,30 @@ export function validateInput(userInput) {
   return "Input not recognised.";
 }
 
+export function buildDisplayState(userInput) {
+  const error = validateInput(userInput);
+
+  if (error) {
+    return {
+      error,
+      output: "",
+      suggestions: "",
+      prediction: ""
+    };
+  }
+
+  const arabicText = transliterate(userInput);
+  const suggestions = getTopSuggestions(arabicText).join(", ");
+  const prediction = getPrediction(arabicText) ?? "";
+
+  return {
+    error: "",
+    output: arabicText,
+    suggestions,
+    prediction
+  };
+}
+
 function setText(id, value) {
   const node = document.getElementById(id);
   if (node) {
@@ -394,78 +416,23 @@ function setText(id, value) {
   }
 }
 
-function renderSuggestions(suggestions) {
-  const list = document.getElementById("suggestions");
-  if (!list) {
-    return;
-  }
-
-  list.innerHTML = "";
-
-  if (suggestions.length === 0) {
-    const empty = document.createElement("li");
-    empty.className = "empty-state";
-    empty.textContent = "No dictionary match yet";
-    list.append(empty);
-    return;
-  }
-
-  for (const suggestion of suggestions) {
-    const item = document.createElement("li");
-    item.textContent = suggestion;
-    item.dir = "rtl";
-    list.append(item);
-  }
-}
-
 function updatePreview(input) {
-  const error = validateInput(input.value);
-  const hasError = Boolean(error);
+  const state = buildDisplayState(input.value);
 
-  setText("error", error ?? "");
-  document.body.classList.toggle("has-error", hasError);
-
-  if (hasError) {
-    setText("arabic-output", "");
-    setText("prediction", "No prediction yet");
-    setText("count", "0 chars");
-    renderSuggestions([]);
-    return;
-  }
-
-  const arabicText = transliterate(input.value);
-  const suggestions = getTopSuggestions(arabicText);
-  const prediction = getPrediction(arabicText);
-
-  setText("arabic-output", arabicText);
-  setText("prediction", prediction ?? "No prediction yet");
-  setText("count", `${input.value.length} chars`);
-  renderSuggestions(suggestions);
+  setText("error", state.error);
+  setText("arabic-output", state.output);
+  setText("suggestions", state.suggestions);
+  setText("prediction", state.prediction);
 }
 
 function initDemo() {
   const input = document.getElementById("latin-input");
-  const exampleList = document.getElementById("examples");
 
-  if (!input || !exampleList) {
+  if (!input) {
     return;
   }
 
   input.addEventListener("input", () => updatePreview(input));
-
-  for (const example of exampleInputs) {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.textContent = example;
-    button.addEventListener("click", () => {
-      input.value = example;
-      input.focus();
-      updatePreview(input);
-    });
-    exampleList.append(button);
-  }
-
-  updatePreview(input);
 }
 
 if (typeof document !== "undefined") {
